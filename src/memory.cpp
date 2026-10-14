@@ -107,4 +107,3 @@ Frame* MemoryManager::findFrameForLoad() {
                                   return left.lastAccess < right.lastAccess;
                               });
 }
-

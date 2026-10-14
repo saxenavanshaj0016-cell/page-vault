@@ -57,4 +57,3 @@ two simulated RAM frames and applies FIFO or LRU when RAM is full.
 required logical page using SQL. The OS module checks the page table, loads a
 missing page from SQLite into a limited RAM-frame pool, and handles page
 replacement using FIFO or LRU.”
-

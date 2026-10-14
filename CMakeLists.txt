@@ -10,4 +10,3 @@ add_executable(PageVault
     src/database.cpp
     src/memory.cpp
 )
-

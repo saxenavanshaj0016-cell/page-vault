@@ -322,4 +322,3 @@ void RecordStore::save(const std::vector<Record>&) const {
     // Kept only for compatibility with the RecordStore interface. SQLite
     // writes each CRUD change directly using INSERT, UPDATE, or DELETE.
 }
-

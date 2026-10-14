@@ -32,4 +32,3 @@ private:
     static void validate(const std::string& name, const std::string& department, int score);
     void save(const std::vector<Record>& records) const;
 };
-
