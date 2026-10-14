@@ -1,0 +1,13 @@
+# Build outputs
+PageVault.exe
+build/
+
+# Runtime-generated local data
+data/*.db
+data/records.csv
+
+# Editor and compiler artifacts
+*.o
+*.obj
+*.user
+
