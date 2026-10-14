@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build PageVault (C++)",
+      "type": "shell",
+      "command": "C:\\MinGW\\bin\\g++.exe",
+      "args": [
+        "-std=c++14",
+        "-Wall",
+        "-Wextra",
+        "-pedantic",
+        "${workspaceFolder}/src/main.cpp",
+        "${workspaceFolder}/src/database.cpp",
+        "${workspaceFolder}/src/memory.cpp",
+        "-o",
+        "${workspaceFolder}/PageVault.exe"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}
+
