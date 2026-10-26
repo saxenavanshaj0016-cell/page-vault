@@ -43,6 +43,13 @@ two simulated RAM frames and applies FIFO or LRU when RAM is full.
 2. Press **Ctrl+Shift+B** and choose **Build PageVault (C++)**.
 3. In the VS Code terminal, run `./PageVault.exe`.
 
+## Run the interactive website
+
+Open `web/index.html` in any modern browser. It is a complete front-end
+simulation: database CRUD, logical pages, RAM frames, page faults, FIFO/LRU,
+process scheduling, locks, and execution logs all work without installing a
+web framework. The C++ source remains the SQLite-backed core implementation.
+
 ## Viva demonstration
 
 1. Choose option `1` to show the SQLite records.
