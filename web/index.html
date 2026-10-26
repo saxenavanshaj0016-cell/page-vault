@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page Vault | OS + DBMS Simulator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="logo">PV</span><div><strong>Page Vault</strong><small>OS + DBMS simulator</small></div></div>
+    <nav>
+      <button class="nav active" data-view="dashboard">◫ Dashboard</button>
+      <button class="nav" data-view="database">▤ Database</button>
+      <button class="nav" data-view="processes">◌ Processes & locks</button>
+      <button class="nav" data-view="about">ⓘ Project status</button>
+    </nav>
+    <section class="settings">
+      <h3>Memory configuration</h3>
+      <label>RAM frames <span id="frame-value">3</span><input id="frame-count" type="range" min="1" max="6" value="3"></label>
+      <label>Records per page <span id="page-value">3</span><input id="page-size" type="range" min="2" max="5" value="3"></label>
+      <label>Replacement policy<select id="policy"><option>FIFO</option><option>LRU</option></select></label>
+      <label>Simulated disk I/O <span id="io-value">180 ms</span><input id="io-delay" type="range" min="50" max="500" step="10" value="180"></label>
+      <p class="hint">Changing frames or policy clears simulated RAM, never your database records.</p>
+    </section>
+  </aside>
+  <main>
+    <header>
+      <div><p class="eyebrow">VIRTUAL MEMORY DATABASE APPLICATION</p><h1 id="view-title">Memory dashboard</h1><p id="subtitle">Watch a database request travel from disk pages into limited RAM.</p></div>
+      <div class="header-actions"><button class="secondary" id="seed">Restore demo data</button><button class="danger" id="reset">Reset RAM</button></div>
+    </header>
+    <section id="dashboard" class="view active">
+      <div class="metrics">
+        <article><small>Total accesses</small><strong id="accesses">0</strong></article><article><small>Page hits</small><strong id="hits">0</strong></article><article><small>Page faults</small><strong id="faults">0</strong></article><article><small>Hit ratio</small><strong id="ratio">0%</strong></article>
+      </div>
+      <div class="grid two">
+        <section class="panel action-panel"><div class="panel-head"><h2>Run a database query</h2><span class="chip">DBMS → OS</span></div><p>Select a record. The DBMS finds its logical page; the OS checks the page table and RAM frames.</p><div class="query-row"><select id="record-picker"></select><button id="access">Fetch record page</button></div><div id="event" class="event neutral">Ready. Access any record to start the simulation.</div><div id="loaded-records" class="loaded-records"></div></section>
+        <section class="panel"><div class="panel-head"><h2>Algorithm comparison</h2><span class="chip">same workload</span></div><div class="comparison"><div><span>FIFO faults</span><strong id="fifo-faults">0</strong></div><div><span>LRU faults</span><strong id="lru-faults">0</strong></div></div><p id="comparison-text" class="hint">Access pages to compare FIFO and LRU over the same sequence.</p></section>
+      </div>
+      <div class="grid two">
+        <section class="panel"><div class="panel-head"><h2>Simulated RAM frames</h2><span id="ram-caption" class="chip">3 frames</span></div><div id="frames" class="frames"></div></section><section class="panel"><div class="panel-head"><h2>Page table</h2><span class="chip">logical → physical</span></div><div id="page-table"></div></section>
+      </div>
+      <section class="panel"><div class="panel-head"><h2>Execution log</h2><button class="text-btn" id="clear-log">Clear</button></div><ol id="log" class="log"></ol></section>
+    </section>
+    <section id="database" class="view">
+      <div class="grid two">
+        <section class="panel"><div class="panel-head"><h2>SQLite record manager</h2><span class="chip">CRUD</span></div><p>This front-end mirrors the <code>records</code> table. The C++ core uses the same fields in <code>data/page_vault.db</code>.</p><form id="record-form" class="form"><input id="record-id" type="hidden"><label>Name<input id="name" required placeholder="Student name"></label><label>Department<input id="department" required placeholder="Computer Science"></label><label>Score<input id="score" type="number" min="0" max="100" required value="80"></label><div><button type="submit">Save record</button><button id="cancel-edit" type="button" class="secondary">Cancel</button></div></form></section>
+        <section class="panel"><div class="panel-head"><h2>Logical disk pages</h2><span id="page-count" class="chip"></span></div><p>Rows are ordered by ID and grouped before the OS loads them into RAM.</p><div id="disk-pages" class="disk-pages"></div></section>
+      </div><section class="panel"><div class="panel-head"><h2>Database records</h2><span class="chip">persistent browser demo state</span></div><div class="table-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Score</th><th>Actions</th></tr></thead><tbody id="records-body"></tbody></table></div></section>
+    </section>
+    <section id="processes" class="view">
+      <div class="grid two">
+        <section class="panel"><div class="panel-head"><h2>Query process scheduler</h2><span class="chip">FCFS / SJF</span></div><form id="process-form" class="form compact"><label>Process name<input id="process-name" required placeholder="P1"></label><label>Record ID<select id="process-record"></select></label><label>CPU burst<select id="process-burst"><option value="2">2 ms</option><option value="4">4 ms</option><option value="6">6 ms</option></select></label><label>Priority<select id="process-priority"><option value="1">1 (high)</option><option value="2">2</option><option value="3">3</option></select></label><button>Add query process</button></form><div class="query-row"><select id="scheduler"><option value="FCFS">FCFS scheduling</option><option value="SJF">SJF scheduling</option><option value="PRIORITY">Priority scheduling</option></select><button id="run-schedule">Run scheduler</button></div><div id="schedule-result" class="event neutral">No process has been scheduled yet.</div></section>
+        <section class="panel"><div class="panel-head"><h2>Page-level locks</h2><span class="chip">mutex simulation</span></div><p>Lock a logical page before an update to illustrate synchronization and prevent competing writes.</p><div class="query-row"><select id="lock-page"></select><button id="toggle-lock">Lock / unlock</button></div><div id="locks" class="locks"></div><p class="hint">A locked page can still be read, but a second simulated write is rejected until it is unlocked.</p></section>
+      </div><section class="panel"><div class="panel-head"><h2>Process queue</h2><button class="text-btn" id="clear-processes">Clear queue</button></div><div id="process-list" class="process-list"></div></section>
+    </section>
+    <section id="about" class="view"><section class="panel status"><h2>Project completion map</h2><div class="completion"><div><strong>DBMS</strong><span>SQLite schema, CRUD, record retrieval, logical disk pages</span><b>Complete</b></div><div><strong>Virtual memory</strong><span>RAM frames, page table, hit/fault, FIFO and LRU</span><b>Complete</b></div><div><strong>OS controls</strong><span>Query processes, scheduling choices, page-lock simulation, I/O timing</span><b>Complete demo</b></div><div><strong>Frontend</strong><span>Interactive dashboard, data manager, charts and logs</span><b>Complete</b></div></div><hr><h3>Viva explanation</h3><p>“The DBMS module keeps records in SQLite and groups ordered rows into logical pages. The OS module maps those pages to limited RAM frames. For each query it detects a page hit or page fault, retrieves a missing page, and applies FIFO or LRU when RAM is full. The dashboard makes these normally hidden operations visible.”</p></section></section>
+  </main><script src="app.js"></script>
+</body></html>
