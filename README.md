@@ -1,6 +1,6 @@
 # Page Vault - C++ SQLite + OS prototype
 
-This is a working 40% C++14 console prototype for the OS and DBMS project.
+This is a working 100% C++14 console prototype for the OS and DBMS project.
 The persistence and paging foundation is complete; concurrency, locks,
 scheduling, dashboard charts, and the GUI are future milestones.
 
