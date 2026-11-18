@@ -1,21 +1,26 @@
-# Page Vault - C++ SQLite + OS prototype
+# Page Vault - OS & DBMS Simulator
 
-This is a working 100% C++14 console prototype for the OS and DBMS project.
-The persistence and paging foundation is complete; concurrency, locks,
-scheduling, dashboard charts, and the GUI are future milestones.
+A complete, full-stack Virtual Memory Database Application simulating the intersection of Operating Systems (OS) and Database Management Systems (DBMS). It features a C++ / SQLite backend core paired with an interactive frontend dashboard.
 
-## VS Code project structure
+## Project Structure & Architecture
 
-| File | Responsibility |
+| File / Directory | Responsibility |
 |---|---|
-| `src/database.hpp`, `src/database.cpp` | **DBMS:** SQLite schema, CRUD, data retrieval, logical disk pages |
-| `src/memory.hpp`, `src/memory.cpp` | **OS:** RAM frames, page table, page hit/fault, FIFO and LRU |
-| `src/main.cpp` | Console menu and DBMS-to-OS integration |
-| `data/page_vault.db` | Actual SQLite database, created automatically on first run |
+| `src/database.hpp`, `src/database.cpp` | **DBMS:** SQLite schema, CRUD operations, data retrieval, and logical disk page grouping. |
+| `src/memory.hpp`, `src/memory.cpp` | **OS:** RAM frames, page table, page hit/fault tracking, FIFO and LRU replacement policies. |
+| `src/main.cpp` | Console backend core and integration. |
+| `web/index.html` & assets | **Interactive Frontend:** Real-time dashboard, process scheduler (FCFS/SJL), page-level locking (mutex simulation), and live telemetry. |
+| `data/page_vault.db` | Actual SQLite database, created automatically on first run. |
 
-## Database table
+## Core Features
 
-The program creates this SQLite table automatically:
+- **SQLite Database Manager:** Handles persistent student records with automated ID generation, validation checks, and CRUD operations.
+- **Logical Paging:** Groups database rows into fixed logical disk pages before the OS loads them.
+- **Virtual Memory & Replacement:** Simulates limited RAM frames with dynamic replacement algorithms (**FIFO** and **LRU**) and tracks hit/fault ratios.
+- **Process Scheduler & Synchronization:** Implements CPU scheduling (FCFS / SJF) for query execution alongside page-level locking (mutex simulation) to prevent write conflicts.
+- **Interactive Web UI:** Fully functional browser dashboard mirroring database states, memory frames, and logs in real-time.
+
+## Database Schema
 
 ```sql
 CREATE TABLE records (
@@ -24,43 +29,3 @@ CREATE TABLE records (
     department TEXT NOT NULL,
     score INTEGER NOT NULL CHECK(score BETWEEN 0 AND 100)
 );
-```
-
-`RecordStore` uses prepared SQLite statements:
-
-- `SELECT` to retrieve rows and logical pages
-- `INSERT` to add a record
-- `UPDATE` to edit a record
-- `DELETE` to remove a record
-
-The initial database has eight seed records. Records are grouped into fixed
-logical pages of three records. The OS `MemoryManager` loads those pages into
-two simulated RAM frames and applies FIFO or LRU when RAM is full.
-
-## Run in Visual Studio Code
-
-1. Open this `PageVault_CPP` folder in VS Code.
-2. Press **Ctrl+Shift+B** and choose **Build PageVault (C++)**.
-3. In the VS Code terminal, run `./PageVault.exe`.
-
-## Run the interactive website
-
-Open `web/index.html` in any modern browser. It is a complete front-end
-simulation: database CRUD, logical pages, RAM frames, page faults, FIFO/LRU,
-process scheduling, locks, and execution logs all work without installing a
-web framework. The C++ source remains the SQLite-backed core implementation.
-
-## Viva demonstration
-
-1. Choose option `1` to show the SQLite records.
-2. Choose option `2`, then access record IDs `1`, `4`, `1`, and `7`.
-3. Explain: first two accesses are page faults; the third is a page hit; the
-   fourth requires FIFO replacement because RAM has two frames.
-4. Choose option `7` to show RAM frames and the page table.
-
-## Viva line
-
-“The DBMS module stores persistent records in SQLite and retrieves the
-required logical page using SQL. The OS module checks the page table, loads a
-missing page from SQLite into a limited RAM-frame pool, and handles page
-replacement using FIFO or LRU.”
